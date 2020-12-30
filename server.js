@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import bodyParser from "body-parser";
 import { graphqlHTTP } from "express-graphql";
@@ -18,19 +20,14 @@ app.use(
     graphiql: true
   })
 );
-app.listen(3000, () => {
-  console.log("Server is running on port 3000!");
-});
 
-// mongoose
-//   .connect(
-//     `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-ntrwp.mongodb.net/${process.env.MONGO_DB}?retryWrites=true`
-//   )
-//   .then(() => {
-//     app.listen(3000, () => {
-//       console.log("Server is running on port 3000!");
-//     });
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
+mongoose
+  .connect(process.env.DB_CONNECTION, { useNewUrlParser: true })
+  .then(() => {
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is running on port ${process.env.PORT}!`);
+    });
+  })
+  .catch(err => {
+    console.log(err);
+  });

@@ -16,9 +16,15 @@ export default buildSchema(`
     todos: [Todo!]!
     todo(id: ID!): Todo
   }
+  
+  type Response {
+    success: Boolean!
+    message: String
+    data: String
+  }
 
   type TodoMutation {
-    createTodo(todoInput: TodoInput): Todo
+    createTodo(todoInput: TodoInput): Response
   }
 
   schema {
