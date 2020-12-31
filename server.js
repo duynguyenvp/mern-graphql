@@ -8,6 +8,7 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 
 import types from "./graphql/types/index";
 import resolvers from "./graphql/resolvers/index";
+import { getErrorCode } from "./utils/response";
 
 const schema = makeExecutableSchema({
   typeDefs: types,
@@ -22,9 +23,9 @@ app.use(
   graphqlHTTP({
     schema: schema,
     graphiql: true,
-    customFormatErrorFn: error => {
-      console.log("error: ", JSON.stringify(error));
-      return error;
+    customFormatErrorFn: err => {
+      const error = getErrorCode(err.message);
+      return { message: error.message, statusCode: error.statusCode };
     }
   })
 );

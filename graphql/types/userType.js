@@ -24,5 +24,5 @@ export default `
   }
 
   type Mutation {
-    createUser(UserInput: UserInput): UserResponse
+    createUser(userInput: UserInput): UserResponse
   }`;

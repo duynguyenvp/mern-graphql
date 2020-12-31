@@ -1,3 +1,4 @@
+import { errorName } from "../../constants/errorCode";
 import TodoModel from "../../models/todo";
 import { createResponse } from "../../utils/response";
 
@@ -14,6 +15,12 @@ export default {
   },
   Mutation: {
     createTodo: async (_, { todoInput }) => {
+      const checkIfExist = await UserModel.findOne({
+        job: todoInput.job
+      }).exec();
+      if (checkIfExist) {
+        throw new Error(errorName.JOB_ALREADY_EXISTS);
+      }
       try {
         const nextTodo = new TodoModel(todoInput);
         await nextTodo.save();

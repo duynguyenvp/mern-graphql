@@ -1,3 +1,4 @@
+import { errorName } from "../../constants/errorCode";
 import UserModel from "../../models/user";
 import { createResponse } from "../../utils/response";
 
@@ -14,6 +15,13 @@ export default {
   },
   Mutation: {
     createUser: async (_, { userInput }) => {
+      const checkIfExist = await UserModel.findOne({
+        name: userInput.name,
+        age: userInput.age
+      }).exec();
+      if (checkIfExist) {
+        throw new Error(errorName.USER_ALREADY_EXISTS);
+      }
       try {
         const nextUser = new UserModel(userInput);
         await nextUser.save();
