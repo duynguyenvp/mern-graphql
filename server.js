@@ -4,10 +4,15 @@ import express from "express";
 import bodyParser from "body-parser";
 import { graphqlHTTP } from "express-graphql";
 import mongoose from "mongoose";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 
-import graphQlSchema from "./graphql/schemas/index";
-import graphQlResolvers from "./graphql/resolvers/index";
+import types from "./graphql/types/index";
+import resolvers from "./graphql/resolvers/index";
 
+const schema = makeExecutableSchema({
+  typeDefs: types,
+  resolvers: resolvers
+});
 const app = express();
 
 app.use(bodyParser.json());
@@ -15,14 +20,20 @@ app.use(bodyParser.json());
 app.use(
   "/graphql",
   graphqlHTTP({
-    schema: graphQlSchema,
-    rootValue: graphQlResolvers,
-    graphiql: true
+    schema: schema,
+    graphiql: true,
+    customFormatErrorFn: error => {
+      console.log("error: ", JSON.stringify(error));
+      return error;
+    }
   })
 );
 
 mongoose
-  .connect(process.env.DB_CONNECTION, { useNewUrlParser: true })
+  .connect(process.env.DB_CONNECTION, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
   .then(() => {
     app.listen(process.env.PORT, () => {
       console.log(`Server is running on port ${process.env.PORT}!`);
