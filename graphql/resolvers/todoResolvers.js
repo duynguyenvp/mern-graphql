@@ -4,7 +4,10 @@ import { createResponse } from "../../utils/response";
 
 export default {
   Query: {
-    todos: async () => {
+    todos: async (_, __, { auth }) => {
+      if (!auth) {
+        return createResponse(null, false, "You must be logged in.");
+      }
       const result = await TodoModel.find({});
       return createResponse(result, true);
     },
@@ -15,7 +18,7 @@ export default {
   },
   Mutation: {
     createTodo: async (_, { todoInput }) => {
-      const checkIfExist = await UserModel.findOne({
+      const checkIfExist = await TodoModel.findOne({
         job: todoInput.job
       }).exec();
       if (checkIfExist) {
